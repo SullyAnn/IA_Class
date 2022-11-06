@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./src/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton:wght@400&display=swap" rel="stylesheet">
+
+    <title>
+        MANDELTRUC
+    </title>
+</head>
+
+<body>
+    <div id="main">
+        <div id="menu">
+            <h1>MANDELBROT</h1>
+            <div class="slidecontainer">
+                <p class="text">Stretch x</p>
+                <input type="range" min="-10" value="1" max="10" step="1" class="slider" id="myRange">
+                <p class="text">Stretch y</p>
+                <input type="range" min="-10" value="1" max="10" step="1" class="slider" id="myRange2">
+                <p class="text">Reduce size</p>
+                <input type="range" min="-100" value="1" max="100" step="10" class="slider" id="myRange3">
+            </div>
+
+            <button id="reset">Reset</button>
+        </div>
+
+        <div id="jeu">
+        
+        </div>
+    </div>
+
+</body>
+
+</html>
+
+<script src="./src/script.js"> </script>
