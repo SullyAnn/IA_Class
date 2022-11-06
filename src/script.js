@@ -188,8 +188,24 @@ reset.addEventListener('click', () => {
   modification = 1;
   modification2 = 1;
   modification3 = 1;
+  canvas.style.filter='invert(0)';
+  invert.checked = false;
   mandelbrot(canvas, -2, 1, -1, 1, 1000);
 
+})
+
+let invert = this.document.getElementById('invert');
+invert.addEventListener('click', ()=> {
+  if(invert.checked == true){
+    canvas.style.filter='invert(1)';
+    mandelbrot(canvas, -2, 1, -1, 1, 1000);
+  
+  } else {
+    canvas.style.filter='invert(0)';
+    invert.checked = false;
+    mandelbrot(canvas, -2, 1, -1, 1, 1000);
+  
+  }
 })
 
 
