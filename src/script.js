@@ -25,6 +25,7 @@ window.addEventListener("load", function () {
         return maxIter - i;
       }
       
+      // Mandelbrot function
       function mandelbrot(canvas, xmin, xmax, ymin, ymax, iterations) {
         var width = canvas.width;
         var height = canvas.height;
@@ -69,25 +70,19 @@ window.addEventListener("load", function () {
         ctx.putImageData(img, 0, 0);
       }
       
+      // create a canvas which will contain the mandelbrot drawing
       var canvas = document.createElement('canvas');
       canvas.width = 300;
       canvas.height = 150;
 
        
       let jeu = document.getElementById("jeu")
-      
       jeu.appendChild(canvas);
 
-      const context = canvas.getContext('2d', { willReadFrequently: true });
 
 // See individual pixels when zooming
+const context = canvas.getContext('2d', { willReadFrequently: true });
 context.imageSmoothingEnabled = false;
-
-// Simply used to display the mouse position and transformed mouse position
-
-
-let isDragging = false;
-let dragStartPosition = { x: 0, y: 0 };
 let currentTransformedCursor;
 
 
@@ -105,6 +100,7 @@ let scrollY     = 0;
 let scale       = 1;
 let scaleFactor = 0.02;
 
+// Get the position of the mouse to zoom at this precise point
 function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();
   return {
@@ -136,7 +132,7 @@ canvas.onwheel =  function(e){
 mandelbrot(canvas, -2*scale, 1*scale, -1*scale, 1*scale, 3000);
 }
 
-
+// Tried to move into the canvas by dragging 
 function onMouseDown(event) {
 	isDragging = true;
 	dragStartPosition = getTransformedPoint(event.offsetX, event.offsetY);
@@ -155,12 +151,10 @@ function onMouseMove(event) {
   	context.translate(currentTransformedCursor.x - dragStartPosition.x, currentTransformedCursor.y - dragStartPosition.y);
     mandelbrot(canvas, -2*scale, 1*scale, -1*scale, 1*scale, 3000);
 		
-    //drawImageToCanvas();
   }
 }
 
 
-canvas.focus()
 mandelbrot(canvas, -2, 1, -1, 1, 1000);
 
 
@@ -171,12 +165,14 @@ slider.oninput = function() {
 
 }
 
+// Update the current slider value (each time you drag the slider handle)
 slider2.oninput = function() {
   modification2 = this.value;
   mandelbrot(canvas, -2, 1, -1, 1, 1000);
 
 }
 
+// Update the current slider value (each time you drag the slider handle)
 slider3.oninput = function() {
   modification3 = this.value;
   mandelbrot(canvas, -2, 1, -1, 1, 1000);
