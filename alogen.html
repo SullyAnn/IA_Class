@@ -1,0 +1,57 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="groupe">
+        <div>
+            <label for="num">Choose a RGB color</label>
+            <input type="number" id="num1"
+            min="0" max="255">
+            <input type="number" id="num2"
+            min="0" max="255">
+            <input type="number" id="num3"
+            min="0" max="255">
+        </div>
+        <button id="generate">Generate</button>
+    <div id="target"></div>
+    <strong>Target color</strong>
+
+
+    </div>
+    
+</body>
+
+
+</html>
+<script src="./src/alogen.js"> 
+
+</script>
+
+<style>
+
+    body{
+        display: flex;
+        justify-content: space-around;
+    }
+    #target{
+        width: 250px;
+        display: flex;
+        height: 200px;
+        border-radius: 25px;
+    }
+    .groupe{
+        display: flex;
+        height: 50%;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+    button{
+        border: 1px solid;
+    border-radius: 20px;
+    width: 76px;
+    }
+</style>
