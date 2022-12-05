@@ -1,73 +1,92 @@
 'use strict';
-let stop = false;
+/* *********** vARIABLES GLOBALES  *********** */
+
+let pas = 0;
+let genNumber =100
+let XCoordinate=0
+const targetHtml = document.getElementById("target")
+let click = document.querySelector('#generate');
+let num1 = document.querySelector('#num1');
+let num2 = document.querySelector('#num2');
+let num3 = document.querySelector('#num3');
+var canvas = document.createElement('canvas');
+let body = document.querySelector('body');
+
+body.appendChild(canvas);
+canvas.style.border='solid 1px grey';
+
+/* *********** INITIALISATION *********** */
+
+num1.value = 255; num2.value = 128; num3.value = 2;
+
+let target = [num1.value, num2.value, num3.value]
+targetHtml.style.background=`rgb(${target[0]},${target[1]},${target[2]})`
+
+
+
+ 
+/* *********** UTILS *********** */
+// fonction random
 function random(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
 
-  // The maximum is exclusive and the minimum is inclusive
+  // Max inclusif et min exclusif 
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-/*function generateLetter() {
-  const code = random(97, 123); // ASCII char codes
-  return String.fromCharCode(code);
-}*/
+// génération d'un couleur aléatoire
 function generateColor(){
     //couleur en RGB entre 0 et 255
     const color = random(0, 255);
     return color;
 }
 
+/* *********** POPULATION ET MEMBRES *********** */
 class Member {
   constructor(target) {
     this.target = target;
     this.keys = [];
 
-    /*for (let i = 0; i < target.length; i += 1) {
-      this.keys[i] = generateLetter();
-    }*/
     for (let i =0; i < target.length; i++){
         this.keys[i] = generateColor();
     }
   }
 
   fitness() {
-    // on vérifie que chaque élément du tableau de couleur correspond à la cible 
+    // on vérifie que chaque élément du tableau de couleur coresspons a peut près à la cible  
     let matches = 0;
 
     for (let i = 0; i < this.keys.length; i++) {
-    let diff = Math.abs(this.keys[i]- this.target[i])
-
-            if (this.keys[i] === this.target[i]) {
-                matches ++;
-            } else if (diff <= 20 ){
-                matches ++;
-            }
+      let diff = Math.abs(this.keys[i]- this.target[i])
+      if (this.keys[i] === this.target[i]) {
+        matches ++;
+      } else if (diff <= 20 ){
+        matches ++;
+      }
     }
-
-    return matches / this.target.length;
-  }
+  return matches / this.target.length;
+}
 
   crossover(partner) {
+    // fusion des partenaires
     const { length } = this.target;
     const child = new Member(this.target);
-    const midpoint = random(0, length);
+    const mid = random(0, length);
 
     for (let i = 0; i < length; i ++) {
-      if (i > midpoint) {
+      if (i > mid) {
         child.keys[i] = this.keys[i];
       } else {
         child.keys[i] = partner.keys[i];
       }
     }
-
     return child;
   }
 
   mutate(mutationRate) {
+    //mutation : on génére une couleur aléatoire 
     for (let i = 0; i < this.keys.length; i += 1) {
-      // If below predefined mutation rate,
-      // generate a new random letter on this position.
       if (Math.random() < mutationRate) {
         this.keys[i] = generateColor();
       }
@@ -76,6 +95,7 @@ class Member {
 }
 
 class Population {
+  // construction d'une population on ajoute dans le tableau membres[] les nouveaux membres et on dessine les premiers membres
   constructor(size, target, mutationRate) {
     size = size || 1;
     this.members = [];
@@ -83,28 +103,26 @@ class Population {
 
     for (let i = 0; i < size; i += 1) {
       this.members.push(new Member(target));
-      drawCircle(this.members[i].keys[0],this.members[i].keys[1], this.members[i].keys[2], random(0, canvas.width), random(0, canvas.height))
-
+      XCoordinate+=0.12;
+      drawCircle(this.members[i].keys[0],this.members[i].keys[1], this.members[i].keys[2], XCoordinate, random(0, canvas.height))
     }
   }
 
   evolve(generations) {
-    for (let i = 0; i < generations && stop==false; i += 1) {
-      
-        setTimeout(()=>{
+    // Evolution de la population => tant que nb de génération pas atteint on les fait se reproduire 
+    for (let i = 0; i < generations ; i++) {
+      setTimeout(()=>{
       const pool = this._selectMembersForMating();
       this._reproduce(pool);
-    }, "500")
+    }, "200")
     }
   }
 
   _selectMembersForMating() {
+    // Selection des parents qui s'accouplent 
     const matingPool = [];
 
     this.members.forEach((m) => {
-      // The fitter he/she is, the more often will be present in the mating pool
-      // i.e. increasing the chances of selection
-      // If fitness == 0, add just one member
       const f = Math.floor(m.fitness() * 100) || 1;
 
       for (let i = 0; i < f; i += 1) {
@@ -116,116 +134,95 @@ class Population {
   }
 
   _reproduce(matingPool) {
-    var ctx = canvas.getContext('2d'); 
-    ctx.clearRect(0,0,canvas.width, canvas.height);
+    console.log(XCoordinate)
   
-    for (let i = 0; i < this.members.length && stop == false; i += 1) {
-      // Pick 2 random members/parent from the mating pool
+    for (let i = 0; i < this.members.length ; i += 1) {
+
+      // On choisi 2 parents random dans le tableau matingPool
       const parentA = matingPool[random(0, matingPool.length)];
       const parentB = matingPool[random(0, matingPool.length)];
 
-      // Perform crossover
+      // Mélange des parents dans l'enfant 
       const child = parentA.crossover(parentB);
-      drawCircle(child.keys[0],child.keys[1], child.keys[2], random(0, canvas.width), random(0, canvas.height))
+      
+      //Dessin de l'enfant avec un timeout
+      pas-=0.001;
+      setTimeout(()=>{
+      XCoordinate +=100
+      drawCircle(child.keys[0],child.keys[1], child.keys[2], Math.sqrt(XCoordinate), random(0, canvas.height+(pas)));
 
+    }, "1000")
 
-
-      // Perform mutation
+      // Mutation
       child.mutate(this.mutationRate);
-
       this.members[i] = child;
     }
   }
 }
 
-// Init function
+// Fonction generate qui regroupe le tout 
 function generate(populationSize, target, mutationRate, generations) {
-  // Create a population and evolve for N generations
+  // Acutalisation du canvas quand on appelle la fonction 
   var ctx = canvas.getContext("2d");
   ctx.clearRect(0,0,canvas.width, canvas.height);
 
+  // Creation de la population et évolution sur un nombre donné de génération
   const population = new Population(populationSize, target, mutationRate);
   population.evolve(generations);
-
-  // Get the typed words from all members and find if someone was able to type the target
-  const membersKeys = population.members.map((m) => m.keys);
- // const perfectCandidatesNum = membersKeys.filter((w) => w === target);
-
-  // Print the results
-/*  membersKeys.forEach((element)=> {
-    drawCircle(element[0],element[1], element[2], random(0, canvas.width), random(0, canvas.height))
-  })*/
-  
-  console.log(membersKeys);
-  //console.log(`${perfectCandidatesNum ? perfectCandidatesNum.length : 0} member(s) typed "${target}"`);
 }
-const targetHtml = document.getElementById("target")
 
-let click = document.querySelector('#generate');
-let num1 = document.querySelector('#num1');
-let num2 = document.querySelector('#num2');
-let num3 = document.querySelector('#num3');
 
-num1.value = 255; num2.value = 128; num3.value = 2;
+/* *********** EVENEMENTS *********** */
 
-// Handle number changes
+// On écoute le click de l'utilisateur 
 click.addEventListener('click', function () {
-    stop=true;
     target = [num1.value, num2.value, num3.value]
     targetHtml.style.background=`rgb(${target[0]},${target[1]},${target[2]})`
-    stop=false;
-
-    generate(50, target , 0.05, 2000 );
+  XCoordinate =0;
+  pas=0;
+    generate(100, target , 0.05, genNumber );
 	
    
 });
+
+// Ecoute des input et changement des valeurs
 num1.addEventListener('input', function () {
-    stop=true;
     target = [num1.value, num2.value, num3.value]
     targetHtml.style.background=`rgb(${target[0]},${target[1]},${target[2]})`   
 });
 num2.addEventListener('input', function () {
-    stop=true;
     target = [num1.value, num2.value, num3.value]
     targetHtml.style.background=`rgb(${target[0]},${target[1]},${target[2]})`   
 });
 num3.addEventListener('input', function () {
-    stop=true;
     target = [num1.value, num2.value, num3.value]
     targetHtml.style.background=`rgb(${target[0]},${target[1]},${target[2]})`   
 });
 
 
-let target = [num1.value, num2.value, num3.value]
-targetHtml.style.background=`rgb(${target[0]},${target[1]},${target[2]})`
+/* *********** EVENEMENTS *********** */
 
+//Dessiner un cercle 
 function drawCircle(Red, Green, Blue, X, Y){
     var ctx = canvas.getContext('2d'); 
-    var R = 20;
+    var R = 15;
     ctx.beginPath();
     ctx.arc(X, Y, R, 0, 2 * Math.PI, false);
     ctx.lineWidth = 3;
-    ctx.fillStyle = `rgb(${Red},${Green},${Blue})`;
+    ctx.fillStyle = `rgba(${Red},${Green},${Blue}, ${-pas*0.01})`;
     ctx.fill();
 }
 
-// create a canvas which will contain the mandelbrot drawing
-var canvas = document.createElement('canvas');
-function draw()
-  {
-    canvas.width = 900;
-    canvas.height = 650;
-    
-        if (canvas.getContext)
-        {  
- 
-          generate(50, target , 0.05, 2000 );
-       
-        }
+// Dessiner un canva
+function draw(){
+  canvas.width = 900;
+  canvas.height = 650;
+  if (canvas.getContext)
+  {  
+    generate(200, target , 0.05, genNumber );
+  }
 } 
 draw();
 
-let body = document.querySelector('body');
-body.appendChild(canvas);
-canvas.style.border='solid 1px grey';
+
 
