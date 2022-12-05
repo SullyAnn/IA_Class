@@ -219,7 +219,7 @@ function draw(){
   canvas.height = 650;
   if (canvas.getContext)
   {  
-    generate(200, target , 0.05, genNumber );
+    generate(100, target , 0.05, genNumber );
   }
 } 
 draw();
